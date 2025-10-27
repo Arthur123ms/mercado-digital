@@ -1,0 +1,30 @@
+{
+  "name": "mercado-digital",
+  "version": "1.0.0",
+  "type": "module", 
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node sr/index.js",
+    "dev": "nodemon src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Arthur123ms/mercado-digital.git"
+  },
+  "keywords": [],
+  "author": "Arthur Magalhães",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Arthur123ms/mercado-digital/issues"
+  },
+  "homepage": "https://github.com/Arthur123ms/mercado-digital#readme",
+  "dependencies": {
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "nodemon": "^3.1.10",
+    "sqlite3": "^5.1.7",
+    "zod": "^4.1.12"
+  }
+}
