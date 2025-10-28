@@ -1,15 +1,26 @@
-import db from "../consfig/database.js"
+import db from "../config/database.js"
+
+db.run(
+    `
+    CREATE TABLE IF NOT EXISTS produtos (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    nome TEXT NOT NULL,
+    descricao TEXT,
+    preco REAL NOT NULL,
+    categoria TEXT NOT NULL
+    )`
+)
 
 function createProductRepositories(nome, descricao, preco, categoria) {
     return new Promise((resolve, reject) => {
         db.run(
             `
-            INSERT INTO produtos (nome, descricao, preco, categoria),
+            INSERT INTO produtos (nome, descricao, preco, categoria)
             VALUES (?, ?, ?, ?)
             `,
         [nome, descricao, preco, categoria],
         
-        function (err){
+        (err) =>{
             if(err){
                 reject(err)
             } else {
@@ -21,7 +32,7 @@ function createProductRepositories(nome, descricao, preco, categoria) {
 }
 
 
-function getAllProductRepositories() {
+function findAllProductRepositories() {
     return new Promise((resolve, reject) => {
         db.all(
             `
@@ -42,23 +53,27 @@ function getAllProductRepositories() {
 
 function updateProductRepositories(updateProduct, productId){
     return new Promise((resolve, reject) => {
-        const fields = [nome, descricao, preco, categoria]
+        const fields = ["nome", "descricao", "preco", "categoria"]
         let query = "UPDATE produtos SET"
         const updates = []
 
         fields.forEach((field => {
             if(updateProduct[field] !== undefined){
-                query += ` ${field} = ?,`
-                updates.push(updateProduct(field))
+                query += ` ${field} = ?`
+                updates.push(updateProduct[field])
             }
         }))
 
         if(updates.length === 0){
-            return resolve({id: productId, updated: false, message: "Nenhum campo para atualizar."})
+            return resolve({
+                id: productId,
+                updated: false, 
+                message: "Nenhum campo para atualizar."
+            })
         }
 
         query = query.slice(0, -1)
-        query += "WHERE id = ?"
+        query += " WHERE id = ?"
         updates.push(productId)
 
         db.run(query, updates, function (err){
@@ -68,7 +83,7 @@ function updateProductRepositories(updateProduct, productId){
                 resolve({
                     id: productId, 
                     updated: this.changes > 0,
-                    changes: this.cahnges
+                    changes: this.changes
                 })
             }
         })
@@ -82,7 +97,7 @@ function deleteProductRepositories(id){
             DELETE FROM produtos WHERE id = ?
             `,
             [id],
-            function (err){
+            (err) => {
                 if(err){
                     reject(err)
                 } else {
@@ -93,15 +108,33 @@ function deleteProductRepositories(id){
     })
 }
 
-function searchProductRepositories(search){
+function searchProductRepositoriesByName(nome){
     return new Promise((resolve, reject) => {
         db.all(
             `
-            SELECT * FROM produtos WHERE nome LIKE ? OR categoria LIKE ?
+            SELECT * FROM produtos WHERE nome LIKE ?
             
             `,
-            [`%${search}%`, `%${search}%`],
+            [`%${nome}%`],
+            (err, rows) => {
+                if(err){
+                    reject(err)
+                } else {
+                    resolve(rows)
+                }
+            }
+        )
+    })
+}
 
+function searchProductRepositoriesByCategory(categoria){
+    return new Promise((resolve, reject) => {
+        db.all(
+            `
+            SELECT * FROM produtos WHERE categoria LIKE ?
+            
+            `,
+            [`%${categoria}%`],
             (err, rows) => {
                 if(err){
                     reject(err)
@@ -118,8 +151,9 @@ function searchProductRepositories(search){
 
 export default {
     createProductRepositories,
-    getAllProductRepositories,
+    findAllProductRepositories,
     deleteProductRepositories,
     updateProductRepositories,
-    searchProductRepositories
+    searchProductRepositoriesByName,
+    searchProductRepositoriesByCategory
 }

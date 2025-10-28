@@ -9,26 +9,43 @@ async function createProductService(nome, descricao, preco, categoria){
 
 async function updateProductService(updateProduct, productId){
     const updateProductResult = await productRepositories.updateProductRepositories(updateProduct, productId)
-    if(!updateProductResult) throw new Error("Erro ao atulizar o produto.")
+    if(!updateProductResult) throw new Error("Erro ao atualizar o produto.")
     return updateProductResult
 }
 
 
 async function deleteProductService(productId){
     const deleteProduct = await productRepositories.deleteProductRepositories(productId)
-    if(!deleteProduct) throw new Error("Erro ao deletat o produto.")
+    if(!deleteProduct) throw new Error("Erro ao deletar o produto.")
     return deleteProduct
 }
 
-async function searchProductService(search){
-    const searchProduct = await productRepositories.searchProductRepositories(search)
-    if(!searchProduct) throw Error("Erro ao buscar o produto.")
+async function searchProductServiceByName(name){
+    const searchProduct = await productRepositories.searchProductRepositoriesByName(name)
+    if(!searchProduct) throw new Error("Erro ao buscar o nome do produto.")
     return searchProduct
 }
+
+async function searchProductServiceByCategory(categoria){
+    const searchProduct = await productRepositories.searchProductRepositoriesByCategory(categoria)
+    if(!searchProduct) throw new Error("Erro ao buscar a categoria do produto.")
+    return searchProduct
+}
+
+
+async function findAllProductService(){
+    const allProduct = await productRepositories.findAllProductRepositories()
+    return allProduct
+}
+
+
 
 export default {
     createProductService,
     updateProductService,
     deleteProductService,
-    searchProductService
+    searchProductServiceByName,
+    findAllProductService,
+    searchProductServiceByCategory
+
 }
